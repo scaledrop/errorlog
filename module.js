@@ -34,7 +34,8 @@ exports.getData = function (obj, callback) {
     	rec++;
     	var response = [];
     	var sortObj = obj.sort ? obj.sort : {};
-    	collection.find(obj.query).sort(sortObj).forEach(function(result) {
+    	var limitObj = obj.limit ? obj.limit : {};
+		collection.find(obj.query).limit(limitObj).sort(sortObj).forEach(function(result) {
     		if(result) {
     			response.push(result);
     		}

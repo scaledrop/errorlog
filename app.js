@@ -17,19 +17,6 @@ db.connect(function () {
 	collection = db.collection();
 });
 
-app.all("*", (req, res, next) => {
-	var data = {
-		url: req.protocol + '://' + req.get('host') + req.originalUrl,
-		data: Object.keys(req.body).length ? req.body : req.query
-	}
-	appModule.saveData({
-		db: db, 
-		data: data, 
-		collection: 'request_log'
-	}, result => {
-		helper.logger(req, res, next);
-	});
-});
 app.use(express.static(__dirname + '/public')); // placed here to override the all requsts
 
 app.use((err, req, res, next) => {
@@ -42,7 +29,7 @@ app.get('/', (req, res) => {
 	res.send('working app..');
 });
 
-app.get("/logerror", (req, res) => {
+app.get("/save", (req, res) => {
   var response = '', reqData = req.query;
   var data = {
       url: decodeURIComponent(reqData.url),
@@ -56,21 +43,42 @@ app.get("/logerror", (req, res) => {
 		db:db, 
 		data: data
 	}, function(result) {
-		helper.preparePostOutput(res, reqData, {"searchResult":"SUCCESS"});
+		helper.prepareOutput(res, reqData, {"searchResult":"SUCCESS"});
 	});
 });
 
-app.get("/logerror/show*", (req, res) => {
+app.post("/save", (req, res) => {
+	var response = '', reqData = req.body;
+	var data = {
+		url: decodeURIComponent(reqData.url),
+		file: reqData.file,
+		line: reqData.line,
+		column: reqData.column,
+		error: reqData.error,
+		createdOn: new Date()
+	};
+	appModule.saveData({
+		db: db,
+		data: data
+	}, function (result) {
+		helper.preparePostOutput(res, reqData, { "searchResult": "SUCCESS" });
+	});
+});
+
+app.get("/show/:pagesize/:pageno", (req, res) => {
 		var response = '', reqData = req.query;
 		var u = req._parsedUrl.pathname,
 		template = 'log_error.ejs',
 		sort = { "createdOn": 1},
 		query = {};
+		let pagesize = req.params.pagesize ? req.params.pagesize : 20;
+		let pageno = req.params.pageno ? req.params.pageno : 1;
 		  
 	appModule.getData({
 			db:db, 
 			query: query,
 			sort: sort,
+			limit: pagesize,
 		  }, function(domainResult) {
 				var finalResult = {};
 				finalResult.domainResult = domainResult ? domainResult : {};
