@@ -1,0 +1,23 @@
+<link href="/css/style.css" rel="stylesheet" type="text/css">
+  <table class="log_table">
+        <thead>
+            <tr>
+                <th>URL</th>
+                <th>File</th>
+                <th>Line</th>
+                <th>Column</th>
+                <th>Error</th>
+            </tr>
+        </thead>
+        <tbody>
+        	<% for(var i=0; i<result.length; i++) {%>
+			    <tr class="result">
+			      <td><%= result[i]['url'] %></td>
+			      <td><%= result[i]['file'] %></td>
+			      <td><%= result[i]['line'] %></td>
+			      <td><%= result[i]['column'] %></td>
+			      <td><%= result[i]['error'] %></td>
+			    </tr>
+			 <% } %>
+        </tbody>
+    </table>

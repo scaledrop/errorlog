@@ -42,14 +42,14 @@ app.get('/', (req, res) => {
 	res.send('working app..');
 });
 
-app.get("/url/log", (req, res) => {
+app.get("/logerror", (req, res) => {
   var response = '', reqData = req.query;
   var data = {
-      server: helper.extractHostname(decodeURIComponent(reqData.url)),
       url: decodeURIComponent(reqData.url),
-      loadTime: parseFloat(reqData.loadTime),
-      serverResponseTime: parseFloat(reqData.serverResponseTime),
-      emailid: reqData.emailid,
+	  file: reqData.file,
+      line: reqData.line,
+      column: reqData.column,
+	  error: reqData.error,
       createdOn: new Date()
   };
   	appModule.saveData({
@@ -60,31 +60,17 @@ app.get("/url/log", (req, res) => {
 	});
 });
 
-app.get("/url/log/show*", (req, res) => {
+app.get("/logerror/show*", (req, res) => {
 		var response = '', reqData = req.query;
-		var u = req._parsedUrl.pathname, 
-		groupOn = "$server", 
-		template = 'log_domain.ejs',
-		sort = { "Avg serverResponseTime": 1};
-		if(u.indexOf('emailid') != -1){
-			groupOn = "$emailid";
-			template = 'log_emailid.ejs';
-			sort = { "count": -1};
-		}
-	  var query = [{
-	          "$group": {
-	              "_id": groupOn,
-	              // "finalTotal": { $sum: "$loadTime" },
-	              "Avg LoadTime" : {$avg: '$loadTime'},
-	              "Avg serverResponseTime" : {$avg: '$serverResponseTime'},
-	              "count" : {$sum: 1}
-	          }
-	      },
-	      { $sort: sort }
-	  ];
-		appModule.aggregate({
+		var u = req._parsedUrl.pathname,
+		template = 'log_error.ejs',
+		sort = { "createdOn": 1},
+		query = {};
+		  
+	appModule.getData({
 			db:db, 
-			query: query
+			query: query,
+			sort: sort,
 		  }, function(domainResult) {
 				var finalResult = {};
 				finalResult.domainResult = domainResult ? domainResult : {};
@@ -92,23 +78,6 @@ app.get("/url/log/show*", (req, res) => {
 		})
 });
 
-app.get('/logerror', (req, res) => {
-	var response = '', reqData = req.query;
-	  var data = {
-	      server: helper.extractHostname(decodeURIComponent(reqData.url)),
-	      url: decodeURIComponent(reqData.url),
-	      loadTime: parseFloat(reqData.loadTime),
-	      serverResponseTime: parseFloat(reqData.serverResponseTime),
-	      emailid: reqData.emailid,
-	      createdOn: new Date()
-	  };
-  	appModule.saveData({
-		db:db, 
-		data: data
-	}, function(result) {
-		helper.preparePostOutput(res, reqData, {"searchResult":"SUCCESS"});
-	});
-})
 
 // And start the server
 

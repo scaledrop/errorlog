@@ -1,7 +1,7 @@
-exports.appPort = 8080;
+exports.appPort = 1300;
 exports.serverTimeout = 20000;
 exports.database = {
-	path: 'mongodb://localhost:27017/', // local server
-	name: 'urllog',
+	path: 'mongodb://localhost:27017/', // live server
+	name: 'eterrorlog',
 	collection: 'urls'
 }
