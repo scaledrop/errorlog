@@ -2,6 +2,7 @@
   <table class="log_table">
         <thead>
             <tr>
+                <th width="160">Date</th>
                 <th>URL</th>
                 <th>File</th>
                 <th>Line</th>
@@ -12,6 +13,7 @@
         <tbody>
         	<% for(var i=0; i<result.length; i++) {%>
 			    <tr class="result">
+			      <td><%= result[i]['createdOn'].toDateString() + ' ' + result[i]['createdOn'].toTimeString().substr(0, 8) %></td>
 			      <td><%= result[i]['url'] %></td>
 			      <td><%= result[i]['file'] %></td>
 			      <td><%= result[i]['line'] %></td>

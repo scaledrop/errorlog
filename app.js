@@ -69,16 +69,17 @@ app.get("/show/:pagesize/:pageno", (req, res) => {
 		var response = '', reqData = req.query;
 		var u = req._parsedUrl.pathname,
 		template = 'log_error.ejs',
-		sort = { "createdOn": 1},
+		sort = { "createdOn": -1},
 		query = {};
-		let pagesize = req.params.pagesize ? req.params.pagesize : 20;
-		let pageno = req.params.pageno ? req.params.pageno : 1;
+		let pagesize = req.params.pagesize ? parseInt(req.params.pagesize) : 10;
+		let pageno = req.params.pageno ? parseInt(req.params.pageno) : 1;
 		  
 	appModule.getData({
 			db:db, 
 			query: query,
 			sort: sort,
-			limit: pagesize,
+			pagesize: pagesize,
+			pageno: pageno,
 		  }, function(domainResult) {
 				var finalResult = {};
 				finalResult.domainResult = domainResult ? domainResult : {};

@@ -33,9 +33,13 @@ exports.getData = function (obj, callback) {
     outputResponse = function () {
     	rec++;
     	var response = [];
-    	var sortObj = obj.sort ? obj.sort : {};
-    	var limitObj = obj.limit ? obj.limit : {};
-		collection.find(obj.query).limit(limitObj).sort(sortObj).forEach(function(result) {
+		let sortObj = obj.sort ? obj.sort : {};
+		
+		let pageSize = obj.pagesize ? obj.pagesize : 10;
+		let pageNumObj = obj.pageno ? obj.pageno : 1;
+		let skipObj = pageSize ? (pageNumObj - 1) * pageSize : '';
+		console.log("pageSize", pageSize);
+		collection.find(obj.query).skip(skipObj).limit(pageSize).sort(sortObj).forEach(function(result) {
     		if(result) {
     			response.push(result);
     		}
