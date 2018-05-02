@@ -29,24 +29,6 @@ app.get('/', (req, res) => {
 	res.send('working app..');
 });
 
-app.get("/save", (req, res) => {
-  var response = '', reqData = req.query;
-  var data = {
-      url: decodeURIComponent(reqData.url),
-	  file: reqData.file,
-      line: reqData.line,
-      column: reqData.column,
-	  error: reqData.error,
-      createdOn: new Date()
-  };
-  	appModule.saveData({
-		db:db, 
-		data: data
-	}, function(result) {
-		helper.prepareOutput(res, reqData, {"searchResult":"SUCCESS"});
-	});
-});
-
 app.post("/save", (req, res) => {
 	var response = '', reqData = req.body;
 	var data = {
@@ -65,14 +47,14 @@ app.post("/save", (req, res) => {
 	});
 });
 
-app.get("/show/:pagesize/:pageno", (req, res) => {
+app.get("/show*", (req, res) => {
 		var response = '', reqData = req.query;
 		var u = req._parsedUrl.pathname,
 		template = 'log_error.ejs',
 		sort = { "createdOn": -1},
 		query = {};
-		let pagesize = req.params.pagesize ? parseInt(req.params.pagesize) : 10;
-		let pageno = req.params.pageno ? parseInt(req.params.pageno) : 1;
+	let pagesize = reqData.pagesize ? parseInt(reqData.pagesize) : 10;
+	let pageno = reqData.pageno ? parseInt(reqData.pageno) : 1;
 		  
 	appModule.getData({
 			db:db, 
